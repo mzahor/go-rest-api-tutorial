@@ -48,7 +48,7 @@ func addProducts(count int) {
 		log.Fatal("Can't create less than one product")
 	}
 	for i := 0; i < count; i++ {
-		_, err := a.DB.Exec("insert into products(name, price) values ($1, $2)", fmt.Sprintf("Product %d", i), (i+1)*10)
+		_, err := a.DB.Exec("insert into products(name, price) values ($1, $2)", fmt.Sprintf("Product %d", i+1), (i+1)*10)
 		if err != nil {
 			log.Fatalf("Failed to add products for testing. %v", err)
 		}
@@ -101,7 +101,7 @@ func TestGetNonExistant(t *testing.T) {
 
 func TestCreate(t *testing.T) {
 	clearTable()
-	reqBody := `{"name": "laptop", "price": "2999.99"}`
+	reqBody := `{"name": "laptop", "price": 2999.99}`
 	req, err := http.NewRequest("POST", "/products", bytes.NewBufferString(reqBody))
 	req.Header.Set("Content-type", "application/json")
 	res := execReq(req)
@@ -151,6 +151,7 @@ func TestUpdate(t *testing.T) {
 	res := execReq(req)
 	var m map[string]interface{}
 	err := json.Unmarshal(res.Body.Bytes(), &m)
+	checkResponseCode(t, http.StatusOK, res.Code)
 	if err != nil {
 		t.Errorf("Failed to parse response json. %v", err)
 	}

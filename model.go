@@ -23,7 +23,7 @@ func (p *product) create(db *sql.DB) error {
 }
 
 func (p *product) update(db *sql.DB) error {
-	_, err := db.Exec("update products set name=$1 price=$2 where id=$3", p.Name, p.Price, p.ID)
+	_, err := db.Exec("update products set name=$1, price=$2 where id=$3", p.Name, p.Price, p.ID)
 	return err
 }
 
@@ -40,7 +40,7 @@ func getProducts(db *sql.DB, skip, take int) ([]product, error) {
 
 	defer rows.Close()
 
-	var products []product
+	products := []product{}
 
 	for rows.Next() {
 		var p product
